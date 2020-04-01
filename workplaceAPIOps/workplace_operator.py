@@ -6,6 +6,7 @@ Created on Tue Oct 22 14:51:45 2019
 @author: adamwidibagaskarta
 """
 
+import os
 import requests
 import json
 import pendulum
@@ -15,7 +16,7 @@ from airflow.exceptions import AirflowException
 
 class WorkplaceAPIOperator(BaseOperator):
     """Airflow operator for Notify task whether its error or succeed
-    
+
     :param recipientId: workplace id group
     :type recipientId: string
     :param type_user: profile user of operator usually group of people
@@ -34,13 +35,14 @@ class WorkplaceAPIOperator(BaseOperator):
         """
         self.token = token
         super(WorkplaceAPIOperator, self).__init__(*args, **kwargs)
-        
+        self.bot_url = os.environ.get('BOT_URL')
+
         if self.token is None:
             raise AirflowException('No valid workplace token supplied.')
-            
+
     def execute(self,context):
         """failed task notification
-        
+
         :param context: callback context provide by airflow like on_failure_callback or on success callback
         :type context: notificationCallback: function
         """
@@ -49,7 +51,7 @@ class WorkplaceAPIOperator(BaseOperator):
         dag=context.get('task_instance').dag_id
         exec_date=context.get('execution_date')
         log_url=context.get('task_instance').log_url
-        
+
         #convert
         dt = pendulum.parse(str(exec_date))
         dt = dt.in_tz('Asia/Jakarta')
@@ -60,20 +62,20 @@ class WorkplaceAPIOperator(BaseOperator):
         message += '''âž¡ *DAG* : ''' + str(dag) + '''\\n'''
         message += '''âž¡ *Execution Time*: ''' + str(exec_date) + '''\\n'''
         message += '''âž¡ *Log Url*: ''' + str(log_url) + '''\\n'''
-            
+
         session_requests = requests.session()
-        WARBOT = "https://api.warungpintar.co/warbot/v1/send?recipent="+self.recipientId+"&type="+self.type_user+"&gitlab_token="+self.token
+        WARBOT = self.bot_url + "?recipent="+self.recipientId+"&type="+self.type_user+"&gitlab_token="+self.token
         session_requests.post(WARBOT, data=json.dumps({"message": message}))
-    
+
     def execute_success(self,context):
         """success task notification
-        
+
         :param context: callback context provide by airflow like on_failure_callback or on_success_callback
         :type context: notificationCallback: function
         """
         dag=context.get('task_instance').dag_id
         exec_date=context.get('execution_date')
-        
+
         #convert
         dt = pendulum.parse(str(exec_date))
         dt = dt.in_tz('Asia/Jakarta')
@@ -83,22 +85,22 @@ class WorkplaceAPIOperator(BaseOperator):
         message += '''âž¡ *DAG* : ''' + str(dag) + '''\\n'''
         message += '''âž¡ *Execution Time*: ''' + str(exec_date) + '''\\n\\n'''
         message += '''Akhirnya bisa tidur dengan nyenyak ðŸ›Œ ðŸ˜´'''
-            
+
         session_requests = requests.session()
-        WARBOT = "https://api.warungpintar.co/warbot/v1/send?recipent=4387182371307936"+"&type="+self.type_user+"&gitlab_token="+self.token
+        WARBOT = self.bot_url + "?recipent=" + self.recipientId +"&type="+self.type_user+"&gitlab_token="+self.token
         session_requests.post(WARBOT, data=json.dumps({"message": message}))
-    
+
     def check_params(self):
         """attribute for debugging by checking parameter of object
-        
+
         :return: string text of token recipientId and type_user
         :rtype: string
         """
         return print(self.token + self.recipientId + self.type_user)
-        
+
 class WorkplaceAPIPostOperator(WorkplaceAPIOperator):
     """just inherit from WorkplaceAPIOperator countering airflow bugs
-    
+
     :param recipientId: workplace id group
     :type recipientId: string
     :param type_user: profile user of operator usually group of people
@@ -106,7 +108,7 @@ class WorkplaceAPIPostOperator(WorkplaceAPIOperator):
     :param token: token id for credential in workplace
     :type token: string
     """
-    
+
     @apply_defaults
     def __init__(self,
                  recipientId,

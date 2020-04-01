@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>workplace_operator &mdash; workplaceAPIOperator beta documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> workplaceAPIOperator
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workplace_operator.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">workplaceAPIOperator</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>workplace_operator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for workplace_operator</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Tue Oct 22 14:51:45 2019</span>
+
+<span class="sd">@author: adamwidibagaskarta</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">pendulum</span>
+<span class="kn">from</span> <span class="nn">airflow.models</span> <span class="kn">import</span> <span class="n">BaseOperator</span>
+<span class="kn">from</span> <span class="nn">airflow.utils.decorators</span> <span class="kn">import</span> <span class="n">apply_defaults</span>
+<span class="kn">from</span> <span class="nn">airflow.exceptions</span> <span class="kn">import</span> <span class="n">AirflowException</span>
+
+<div class="viewcode-block" id="WorkplaceAPIOperator"><a class="viewcode-back" href="../workplace_operator.html#workplace_operator.WorkplaceAPIOperator">[docs]</a><span class="k">class</span> <span class="nc">WorkplaceAPIOperator</span><span class="p">(</span><span class="n">BaseOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Airflow operator for Notify task whether its error or succeed</span>
+<span class="sd">    </span>
+<span class="sd">    :param recipientId: workplace id group</span>
+<span class="sd">    :type recipientId: string</span>
+<span class="sd">    :param type_user: profile user of operator usually group of people</span>
+<span class="sd">    :type type_user: string, optional</span>
+<span class="sd">    :param token: token id for credential in workplace</span>
+<span class="sd">    :type token: string</span>
+<span class="sd">    :raises AirflowException: if workplace token id was empty not supplied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@apply_defaults</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">recipientId</span><span class="p">,</span>
+                 <span class="n">type_user</span><span class="p">,</span>
+                 <span class="n">token</span><span class="p">,</span>
+                 <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WorkplaceAPIOperator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span><span class="s1">&#39;No valid workplace token supplied.&#39;</span><span class="p">)</span>
+            
+<div class="viewcode-block" id="WorkplaceAPIOperator.execute"><a class="viewcode-back" href="../workplace_operator.html#workplace_operator.WorkplaceAPIOperator.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;failed task notification</span>
+<span class="sd">        </span>
+<span class="sd">        :param context: callback context provide by airflow like on_failure_callback or on success callback</span>
+<span class="sd">        :type context: notificationCallback: function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ti</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task_instance&#39;</span><span class="p">)</span>
+        <span class="n">task</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task_instance&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">task_id</span>
+        <span class="n">dag</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task_instance&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dag_id</span>
+        <span class="n">exec_date</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;execution_date&#39;</span><span class="p">)</span>
+        <span class="n">log_url</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task_instance&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">log_url</span>
+        
+        <span class="c1">#convert</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">pendulum</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exec_date</span><span class="p">))</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">in_tz</span><span class="p">(</span><span class="s1">&#39;Asia/Jakarta&#39;</span><span class="p">)</span>
+        <span class="n">exec_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">to_datetime_string</span><span class="p">()</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;ðŸ”´ Oops Task failed &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ti</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\\</span><span class="s1">n</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;âž¡ *Task*: &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;âž¡ *DAG* : &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dag</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;âž¡ *Execution Time*: &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exec_date</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;âž¡ *Log Url*: &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">log_url</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+            
+        <span class="n">session_requests</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
+        <span class="n">WARBOT</span> <span class="o">=</span> <span class="s2">&quot;https://api.warungpintar.co/warbot/v1/send?recipent=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">recipientId</span><span class="o">+</span><span class="s2">&quot;&amp;type=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">type_user</span><span class="o">+</span><span class="s2">&quot;&amp;gitlab_token=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span>
+        <span class="n">session_requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">WARBOT</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">}))</span></div>
+    
+<div class="viewcode-block" id="WorkplaceAPIOperator.execute_success"><a class="viewcode-back" href="../workplace_operator.html#workplace_operator.WorkplaceAPIOperator.execute_success">[docs]</a>    <span class="k">def</span> <span class="nf">execute_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;success task notification</span>
+<span class="sd">        </span>
+<span class="sd">        :param context: callback context provide by airflow like on_failure_callback or on_success_callback</span>
+<span class="sd">        :type context: notificationCallback: function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dag</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task_instance&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dag_id</span>
+        <span class="n">exec_date</span><span class="o">=</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;execution_date&#39;</span><span class="p">)</span>
+        
+        <span class="c1">#convert</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">pendulum</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exec_date</span><span class="p">))</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">in_tz</span><span class="p">(</span><span class="s1">&#39;Asia/Jakarta&#39;</span><span class="p">)</span>
+        <span class="n">exec_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">to_datetime_string</span><span class="p">()</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;âœ… Congratulation, your DAG succeeded </span><span class="se">\\</span><span class="s1">n</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;âž¡ *DAG* : &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dag</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;âž¡ *Execution Time*: &#39;&#39;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exec_date</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\\</span><span class="s1">n</span><span class="se">\\</span><span class="s1">n&#39;&#39;&#39;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s1">&#39;&#39;&#39;Akhirnya bisa tidur dengan nyenyak ðŸ›Œ ðŸ˜´&#39;&#39;&#39;</span>
+            
+        <span class="n">session_requests</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
+        <span class="n">WARBOT</span> <span class="o">=</span> <span class="s2">&quot;https://api.warungpintar.co/warbot/v1/send?recipent=4387182371307936&quot;</span><span class="o">+</span><span class="s2">&quot;&amp;type=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">type_user</span><span class="o">+</span><span class="s2">&quot;&amp;gitlab_token=&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span>
+        <span class="n">session_requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">WARBOT</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">}))</span></div>
+    
+<div class="viewcode-block" id="WorkplaceAPIOperator.check_params"><a class="viewcode-back" href="../workplace_operator.html#workplace_operator.WorkplaceAPIOperator.check_params">[docs]</a>    <span class="k">def</span> <span class="nf">check_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;attribute for debugging by checking parameter of object</span>
+<span class="sd">        </span>
+<span class="sd">        :return: string text of token recipientId and type_user</span>
+<span class="sd">        :rtype: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipientId</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_user</span><span class="p">)</span></div></div>
+        
+<div class="viewcode-block" id="WorkplaceAPIPostOperator"><a class="viewcode-back" href="../workplace_operator.html#workplace_operator.WorkplaceAPIPostOperator">[docs]</a><span class="k">class</span> <span class="nc">WorkplaceAPIPostOperator</span><span class="p">(</span><span class="n">WorkplaceAPIOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;just inherit from WorkplaceAPIOperator countering airflow bugs</span>
+<span class="sd">    </span>
+<span class="sd">    :param recipientId: workplace id group</span>
+<span class="sd">    :type recipientId: string</span>
+<span class="sd">    :param type_user: profile user of operator usually group of people</span>
+<span class="sd">    :type type_user: string, optional</span>
+<span class="sd">    :param token: token id for credential in workplace</span>
+<span class="sd">    :type token: string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="nd">@apply_defaults</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">recipientId</span><span class="p">,</span>
+                 <span class="n">type_user</span><span class="p">,</span>
+                 <span class="n">token</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recipientId</span> <span class="o">=</span> <span class="n">recipientId</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_user</span> <span class="o">=</span> <span class="n">type_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">WorkplaceAPIPostOperator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span> <span class="n">recipientId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recipientId</span><span class="p">,</span>
+                                                        <span class="n">type_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_user</span><span class="p">,</span>
+                                                        <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+                                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Adam Widi Bagaskarta
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

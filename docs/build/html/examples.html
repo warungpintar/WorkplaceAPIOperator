@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Examples &mdash; workplaceAPIOperator beta documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Documentation" href="workplace_operator.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> workplaceAPIOperator
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workplace_operator.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-usage">Installation/Usage:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-one-of-our-dag">Example one of our DAG</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">workplaceAPIOperator</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation-usage">
+<h2>Installation/Usage:<a class="headerlink" href="#installation-usage" title="Permalink to this headline">¶</a></h2>
+<p>As the package has not been published on PyPi yet, it CANNOT be install using pip.</p>
+<p>For now, you only need the source code module from workplace_operator to use it.</p>
+</div>
+<div class="section" id="example-one-of-our-dag">
+<h2>Example one of our DAG<a class="headerlink" href="#example-one-of-our-dag" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;This example demonstrates on simply our DAG in Warung Pintar using BashOperator</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+    <span class="kn">import</span> <span class="nn">airflow</span>
+    <span class="kn">from</span> <span class="nn">airflow</span> <span class="kn">import</span> <span class="n">models</span>
+    <span class="kn">from</span> <span class="nn">airflow</span> <span class="kn">import</span> <span class="n">DAG</span>
+    <span class="kn">from</span> <span class="nn">airflow.operators.bash_operator</span> <span class="kn">import</span> <span class="n">BashOperator</span>
+    <span class="kn">from</span> <span class="nn">dependencies</span> <span class="kn">import</span> <span class="n">workplace_operator</span>
+
+    <span class="k">def</span> <span class="nf">on_dag_failure</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+        <span class="n">print_task_instances</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">print_task_instances</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+        <span class="n">failed_alert</span> <span class="o">=</span> <span class="n">workplace_operator</span><span class="o">.</span><span class="n">WorkplaceAPIPostOperator</span><span class="p">(</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="s1">&#39;failed_task&#39;</span><span class="p">,</span>
+            <span class="n">recipientId</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Variable</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;workplace_id_grup&#39;</span><span class="p">),</span>
+            <span class="n">token</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Variable</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;git_token&#39;</span><span class="p">),</span>
+            <span class="n">type_user</span><span class="o">=</span><span class="s1">&#39;group&#39;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">failed_alert</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_dag_success</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+        <span class="n">print_task_success</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">print_task_success</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+        <span class="n">success_alert</span> <span class="o">=</span> <span class="n">workplace_operator</span><span class="o">.</span><span class="n">WorkplaceAPIPostOperator</span><span class="p">(</span>
+            <span class="n">task_id</span> <span class="o">=</span> <span class="s1">&#39;success_task&#39;</span><span class="p">,</span>
+            <span class="n">recipientId</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Variable</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;workplace_id_grup&#39;</span><span class="p">),</span>
+            <span class="n">token</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Variable</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;git_token&#39;</span><span class="p">),</span>
+            <span class="n">type_user</span><span class="o">=</span><span class="s1">&#39;group&#39;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">success_alert</span><span class="o">.</span><span class="n">execute_success</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="n">default_dag_args</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;owner&#39;</span> <span class="p">:</span> <span class="s1">&#39;fadhilla&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;start_date&#39;</span> <span class="p">:</span> <span class="n">airflow</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">days_ago</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s1">&#39;email_on_failure&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;email_on_retry&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;provide_context&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;retries&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;retry_delay&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="s1">&#39;project_id&#39;</span><span class="p">:</span> <span class="n">models</span><span class="o">.</span><span class="n">Variable</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gcp_project_id&#39;</span><span class="p">,</span> <span class="n">default_var</span><span class="o">=</span><span class="s1">&#39;warung-support&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+          <span class="s1">&#39;etl-popin-clustering&#39;</span><span class="p">,</span>
+          <span class="n">description</span><span class="o">=</span><span class="s1">&#39;etl-popin-clustering&#39;</span><span class="p">,</span>
+          <span class="n">schedule_interval</span><span class="o">=</span><span class="s1">&#39;35 0 * * *&#39;</span><span class="p">,</span>
+          <span class="n">on_success_callback</span><span class="o">=</span><span class="n">on_dag_success</span><span class="p">,</span>
+          <span class="n">default_args</span><span class="o">=</span><span class="n">default_dag_args</span><span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+
+      <span class="n">etl_popin_clustering_area</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s1">&#39;etl-popin-clustering-area&#39;</span><span class="p">,</span><span class="n">on_failure_callback</span><span class="o">=</span><span class="n">on_dag_failure</span><span class="p">,</span>
+      <span class="n">bash_command</span><span class="o">=</span><span class="s1">&#39;PYTHONPATH=/home/airflow/gcs/data/dag_script python /home/airflow/gcs/data/dag_script/Popin_Clustering_Area.py&#39;</span><span class="p">)</span>
+
+      <span class="n">etl_popin_clustering_area</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="workplace_operator.html" class="btn btn-neutral float-left" title="Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Adam Widi Bagaskarta
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

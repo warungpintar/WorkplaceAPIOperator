@@ -1,2 +1,3 @@
-# WorkplaceAPIOperator
-WorkplaceAPIOperator as notification via workplace warbot 
+# workplace_operator
+
+workplace API operator using Warbot Notifier

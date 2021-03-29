@@ -54,7 +54,7 @@ pandas==0.25.3
 pendulum==1.4.4
 prison==0.1.2
 psutil==5.7.0
-Pygments==2.6.1
+Pygments==2.7.4
 PyJWT==1.7.1
 pyparsing==2.4.6
 pyrsistent==0.15.7
